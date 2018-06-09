@@ -1,3 +1,16 @@
+import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/iron-list/iron-list.js';
+import '@polymer/paper-styles/typography.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/neon-animation/web-animations.js';
+import moment from 'moment';
+import './range-datepicker-cell.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 /**
  * `range-datepicker-calendar`
  *
@@ -5,7 +18,181 @@
  * @polymer
  * @demo demo/index.html
  */
-class RangeDatepickerCalendar extends Polymer.Element {
+class RangeDatepickerCalendar extends PolymerElement {
+  static get template() {
+    return html`
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply --paper-font-common-base;
+        display: block;
+        width: 266px;
+      }
+
+      :host>div {
+        overflow: hidden;
+      }
+
+      div.table {
+        display: table;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      div.th {
+        display: table-cell;
+        @apply --paper-font-caption;
+        color: var(--range-datepicker-day-names-text, rgb(117, 117, 117));
+        font-size: 11px;
+        width: 38px;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+      }
+
+      div.tr {
+        display: table-row;
+        height: 38px;
+      }
+
+      div.td {
+        display: table-cell;
+        padding: 0;
+        width: 38px;
+        margin: 0;
+        height: 38px;
+      }
+
+      .monthName {
+        @apply --paper-font-title;
+        width: 266px;
+        margin: 10px 0;
+        text-align: center;
+        color: var(--range-datepicker-month-text);
+      }
+
+      .monthName::first-letter {
+        text-transform: uppercase;
+      }
+
+      .monthName>div>div {
+        margin-right: 8px;
+        height: 30px;
+      }
+
+      paper-listbox {
+        max-height: 200px;
+      }
+
+      div.tbody {
+        transition: all 0ms;
+        transform: translateX(0);
+        height: 235px;
+      }
+
+      .withTransition {
+        transition: all 100ms;
+      }
+
+      .moveToLeft {
+        transform: translateX(-274px);
+      }
+
+      .moveToRight {
+        transform: translateX(274px);
+      }
+
+      .withTransition td,
+      .moveToLeft td,
+      .moveToRight td {
+        border: none;
+      }
+
+      paper-dropdown-menu {
+        --paper-input-container-underline: {
+          display: none;
+        }
+
+        --paper-input-container-underline-focus: {
+          display: none;
+        }
+        --paper-input-container-underline-disabled: {
+          display: none;
+        }
+
+        --paper-input-container: {
+          width: 75px;
+          padding: 0;
+        }
+
+        --paper-input-container-input: {
+          @apply --paper-font-title;
+        }
+      }
+    </style>
+
+    <div>
+      <div class="monthName layout horizontal center">
+        <dom-if if="[[_ifNarrow(prev, narrow)]]">
+          <template>
+            <paper-icon-button icon="chevron-left" on-tap="_handlePrevMonth"></paper-icon-button>
+          </template>
+        </dom-if>
+        <div class="flex layout horizontal center center-justified">
+          <div>
+            [[_computeCurrentMonthName(month, year)]]
+          </div>
+          <dom-if if="[[enableYearChange]]">
+            <template>
+              <paper-dropdown-menu no-label-float="">
+                <paper-listbox slot="dropdown-content" selected="{{year}}" attr-for-selected="data-name">
+                  <dom-repeat items="[[_yearsList]]" as="yearList">
+                    <template>
+                      <paper-item data-name\$="[[yearList]]">[[yearList]]</paper-item>
+                    </template>
+                  </dom-repeat>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </template>
+          </dom-if>
+          <dom-if if="[[!enableYearChange]]">
+            <template>
+              [[year]]
+            </template>
+          </dom-if>
+        </div>
+        <dom-if if="[[_ifNarrow(next, narrow)]]">
+          <template>
+            <paper-icon-button icon="chevron-right" on-tap="_handleNextMonth"></paper-icon-button>
+          </template>
+        </dom-if>
+      </div>
+
+      <div class="table">
+        <div class="thead">
+          <div class="tr">
+            <template is="dom-repeat" items="[[_dayNamesOfTheWeek]]" as="dayNameOfWeek">
+              <div class="th">[[dayNameOfWeek]]
+            </div></template>
+          </div>
+        </div>
+        <div class="tbody">
+          <template is="dom-repeat" items="[[_daysOfMonth]]" as="week">
+            <div class="tr">
+              <template is="dom-repeat" items="[[week]]" as="dayOfMonth">
+                <div class\$="td [[_tdIsEnabled(dayOfMonth)]]">
+                  <template is="dom-if" if="[[dayOfMonth]]">
+                    <range-datepicker-cell disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" month="[[month]]" on-date-is-hovered="_handleDateHovered" hovered-date="[[hoveredDate]]" date-to="[[dateTo]]" date-from="[[dateFrom]]" on-date-is-selected="_handleDateSelected" day="[[dayOfMonth]]"></range-datepicker-cell>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+`;
+  }
+
   static get is() {
     return 'range-datepicker-calendar';
   }

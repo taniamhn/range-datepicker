@@ -1,4 +1,11 @@
-/* global RangeDatepickerBehavior */
+import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-media-query/iron-media-query.js';
+import './range-datepicker-calendar.js';
+import './range-datepicker-behavior.js';
+import moment from 'moment';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
 /**
  * `range-datepicker`
  *
@@ -6,7 +13,46 @@
  * @polymer
  * @demo demo/index.html
  */
-class RangeDatepicker extends RangeDatepickerBehavior(Polymer.Element) {
+class RangeDatepicker extends RangeDatepickerBehavior(PolymerElement) {
+  static get template() {
+    return html`
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      #firstDatePicker {
+        margin-right: 16px;
+      }
+    </style>
+
+    <iron-media-query query="(max-width: 650px)" query-matches="{{narrow}}"></iron-media-query>
+
+    <dom-if if="[[!forceNarrow]]">
+      <template>
+        <dom-if if="[[!narrow]]">
+          <template>
+            <div class="layout vertical center-justified">
+              <div class="layout horizontal">
+                <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" prev="" no-range="[[noRange]]" on-prev-month="_handlePrevMonth" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" id="firstDatePicker" locale="[[locale]]" month="[[month]]" year="[[year]]">
+                </range-datepicker-calendar>
+                <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" next="" no-range="[[noRange]]" on-next-month="_handleNextMonth" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" locale="[[locale]]" month="[[_monthPlus]]" year="[[_yearPlus]]">
+                </range-datepicker-calendar>
+              </div>
+            </div>
+          </template>
+        </dom-if>
+      </template>
+    </dom-if>
+    <dom-if if="[[_isNarrow(forceNarrow, narrow)]]">
+      <template>
+        <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" no-range="[[noRange]]" narrow="[[_isNarrow(forceNarrow, narrow)]]" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" locale="[[locale]]" prev="" next="" month="[[month]]" year="[[year]]">
+        </range-datepicker-calendar>
+      </template>
+    </dom-if>
+`;
+  }
+
   static get is() {
     return 'range-datepicker';
   }
