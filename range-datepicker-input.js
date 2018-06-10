@@ -1,18 +1,16 @@
-import { PolymerElement } from '@polymer/polymer/polymer-element';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-material/paper-material.js';
 import './range-datepicker-calendar.js';
-import './range-datepicker-behavior.js';
 import moment from 'moment';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { templatize } from '@polymer/polymer/lib/utils/templatize.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { Templatizer } from '@polymer/polymer/lib/legacy/templatizer-behavior.js';
+import { RangeDatepickerBehavior } from './range-datepicker-behavior.js';
 
-const { html } = Polymer;
 /**
  * `range-datepicker-input`
  *
@@ -156,6 +154,7 @@ class RangeDatepickerInput extends mixinBehaviors(
         paper-material {
           padding: 16px;
           display: block;
+          background-color: var(--paper-card-background-color);
         }
       </style>
       <iron-media-query query="(max-width: 650px)" query-matches="{{narrow}}"></iron-media-query>

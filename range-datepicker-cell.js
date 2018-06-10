@@ -1,9 +1,8 @@
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/paper-styles/color.js';
 import '@polymer/paper-styles/typography.js';
-import moment form 'moment.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
 class RangeDatepickerCell extends PolymerElement {
   static get template() {
     return html`

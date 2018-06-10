@@ -1,10 +1,8 @@
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import './range-datepicker-calendar.js';
-import './range-datepicker-behavior.js';
-import moment from 'moment';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { RangeDatepickerBehavior } from './range-datepicker-behavior.js';
 
 /**
  * `range-datepicker`

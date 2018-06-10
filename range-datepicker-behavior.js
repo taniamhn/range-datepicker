@@ -8,7 +8,7 @@ import moment from 'moment';
 /* eslint no-unused-vars: off */
 
 /* @polymerMixin */
-const RangeDatepickerBehavior = subclass =>
+export const RangeDatepickerBehavior = subclass =>
   class extends subclass {
     _localeChanged(locale) {
       if (!this.month) {

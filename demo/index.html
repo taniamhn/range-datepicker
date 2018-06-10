@@ -7,36 +7,29 @@
 
   <title>range-datepicker demo</title>
 
-  <script src="../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script src="../node-modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
 
-  <script type="module" src="../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js"></script>
-  <script type="module" src="../../@polymer/iron-demo-helpers/demo-snippet.js"></script>
-  <script type="module" src="../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
-  <script type="module" src="../../@polymer/paper-input/paper-input.js"></script>
+  <script type="module" src="../node-modules/@polymer/iron-demo-helpers/demo-pages-shared-styles.js"></script>
+  <script type="module" src="../node-modules/@polymer/iron-demo-helpers/demo-snippet.js"></script>
+  <script type="module" src="../node-modules/@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
+  <script type="module" src="../node-modules/@polymer/paper-input/paper-input.js"></script>
   <script type="module" src="../range-datepicker.js"></script>
   <script type="module" src="../range-datepicker-input.js"></script>
 
-  <!-- FIXME(polymer-modulizer):
-        These imperative modules that innerHTML your HTML are
-        a hacky way to be sure that any mixins in included style
-        modules are ready before any elements that reference them are
-        instantiated, otherwise the CSS @apply mixin polyfill won't be
-        able to expand the underlying CSS custom properties.
-        See: https://github.com/Polymer/polymer-modulizer/issues/154
-        -->
-    <script type="module">
-const $_documentContainer = document.createElement('template');
+  
+  <script type="module">
+  const $_documentContainer = document.createElement('template');
 
-$_documentContainer.innerHTML = `<custom-style>
-    <style is="custom-style" include="demo-pages-shared-styles iron-flex iron-flex-alignment">
-      div>paper-input:nth-child(1) {
-        margin-right: 12px;
-      }
-    </style>
-  </custom-style>`;
+  $_documentContainer.innerHTML = `<custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles iron-flex iron-flex-alignment">
+        div>paper-input:nth-child(1) {
+          margin-right: 12px;
+        }
+      </style>
+    </custom-style>`;
 
-document.body.appendChild($_documentContainer.content);
-</script>
+  document.body.appendChild($_documentContainer.content);
+  </script>
 </head>
 
 <body>

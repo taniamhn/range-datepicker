@@ -1,4 +1,4 @@
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-icons/iron-icons.js';
 import '@polymer/iron-list/iron-list.js';
@@ -7,10 +7,8 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-item/paper-item.js';
-import '@polymer/neon-animation/web-animations.js';
 import moment from 'moment';
 import './range-datepicker-cell.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 /**
  * `range-datepicker-calendar`
  *
