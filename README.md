@@ -12,7 +12,6 @@
 
 ### Install
 
-    bower install range-datepicker
     npm install range-datepicker
 
 Inspired by [airbnb datepicker](https://github.com/airbnb/react-dates).
