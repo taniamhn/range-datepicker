@@ -4,7 +4,7 @@ import '@polymer/iron-media-query/iron-media-query.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-material/paper-material.js';
 import './range-datepicker-calendar.js';
-import moment from 'moment';
+import { format } from 'date-fns/esm';
 import { templatize } from '@polymer/polymer/lib/utils/templatize.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
@@ -50,15 +50,6 @@ class RangeDatepickerInput extends mixinBehaviors(
         type: Boolean,
         value: false,
         notify: true,
-      },
-      /**
-       * Set locale of the calendar.
-       * Default is 'en'.
-       */
-      locale: {
-        type: String,
-        value: 'en',
-        observer: '_localeChanged',
       },
       /**
        * Set month.
@@ -173,11 +164,11 @@ class RangeDatepickerInput extends mixinBehaviors(
                         <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected"
                           enable-year-change="[[enableYearChange]]" prev no-range="[[noRange]]" on-prev-month="_handlePrevMonth"
                           hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" id="firstDatePicker"
-                          locale="[[locale]]" month="[[month]]" year="[[year]]">
+                          month="[[month]]" year="[[year]]">
                         </range-datepicker-calendar>
                         <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected"
                           enable-year-change="[[enableYearChange]]" next no-range="[[noRange]]" on-next-month="_handleNextMonth"
-                          hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" locale="[[locale]]"
+                          hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}"
                           month="[[_monthPlus]]" year="[[_yearPlus]]">
                         </range-datepicker-calendar>
                       </div>
@@ -190,7 +181,7 @@ class RangeDatepickerInput extends mixinBehaviors(
               <template>
                 <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" enable-year-change="[[enableYearChange]]"
                   narrow="[[_isNarrow(forceNarrow, narrow)]]" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}"
-                  date-from="{{dateFrom}}" locale="[[locale]]" month="[[month]]" year="[[year]]" no-range="[[noRange]]"
+                  date-from="{{dateFrom}}" month="[[month]]" year="[[year]]" no-range="[[noRange]]"
                   next prev>
                 </range-datepicker-calendar>
               </template>
@@ -214,9 +205,7 @@ class RangeDatepickerInput extends mixinBehaviors(
 
   _formatDate(date) {
     if (date) {
-      return moment(date, 'X')
-        .locale(this.locale)
-        .format(this.dateFormat);
+      return format(date, this.dateFormat);
     }
     return '';
   }

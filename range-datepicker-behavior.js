@@ -1,4 +1,3 @@
-import moment from 'moment';
 
 /**
  * `range-datepicker-behavior`
@@ -10,15 +9,6 @@ import moment from 'moment';
 /* @polymerMixin */
 export const RangeDatepickerBehavior = subclass =>
   class extends subclass {
-    _localeChanged(locale) {
-      if (!this.month) {
-        this.month = moment().locale(locale).format('MM');
-      }
-      if (!this.year) {
-        this.year = moment().locale(locale).format('YYYY');
-      }
-    }
-
     _handlePrevMonth() {
       if (!this.enableYearChange) {
         this.shadowRoot.querySelector('range-datepicker-calendar[next]')._handlePrevMonth();
@@ -33,11 +23,18 @@ export const RangeDatepickerBehavior = subclass =>
 
     _monthChanged(month, year) {
       if (year && month) {
-        this._monthPlus = moment(month, 'MM').locale(this.locale).add(1, 'month').format('MM');
-        if (this._monthPlus === '01') {
+        let monthPlus = parseInt(month, 10) + 1;
+        if (monthPlus > 12) {
+          monthPlus = 1;
           this._yearPlus = parseInt(year, 10) + 1;
         } else {
           this._yearPlus = parseInt(year, 10);
+        }
+        if (monthPlus < 10) {
+          this._monthPlus = '0' + monthPlus;
+        }
+        else {
+          this._monthPlus = '' + monthPlus;
         }
       }
     }

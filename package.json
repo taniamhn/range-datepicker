@@ -50,7 +50,7 @@
     "@polymer/paper-material": "^3.0.0-pre.18",
     "@polymer/paper-styles": "^3.0.0-pre.18",
     "@polymer/polymer": "^3.0.0",
-    "moment": "^2.22.2",
+    "date-fns": "^2.0.0-alpha.10",
     "web-animations-js": "^2.3.1"
   }
 }

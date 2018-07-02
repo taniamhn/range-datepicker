@@ -32,9 +32,9 @@ class RangeDatepicker extends RangeDatepickerBehavior(PolymerElement) {
           <template>
             <div class="layout vertical center-justified">
               <div class="layout horizontal">
-                <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" prev="" no-range="[[noRange]]" on-prev-month="_handlePrevMonth" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" id="firstDatePicker" locale="[[locale]]" month="[[month]]" year="[[year]]">
+                <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" prev="" no-range="[[noRange]]" on-prev-month="_handlePrevMonth" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" id="firstDatePicker" month="[[month]]" year="[[year]]">
                 </range-datepicker-calendar>
-                <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" next="" no-range="[[noRange]]" on-next-month="_handleNextMonth" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" locale="[[locale]]" month="[[_monthPlus]]" year="[[_yearPlus]]">
+                <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" next="" no-range="[[noRange]]" on-next-month="_handleNextMonth" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" month="[[_monthPlus]]" year="[[_yearPlus]]">
                 </range-datepicker-calendar>
               </div>
             </div>
@@ -44,7 +44,7 @@ class RangeDatepicker extends RangeDatepickerBehavior(PolymerElement) {
     </dom-if>
     <dom-if if="[[_isNarrow(forceNarrow, narrow)]]">
       <template>
-        <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" no-range="[[noRange]]" narrow="[[_isNarrow(forceNarrow, narrow)]]" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" locale="[[locale]]" prev="" next="" month="[[month]]" year="[[year]]">
+        <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected" enable-year-change="[[enableYearChange]]" no-range="[[noRange]]" narrow="[[_isNarrow(forceNarrow, narrow)]]" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" prev="" next="" month="[[month]]" year="[[year]]">
         </range-datepicker-calendar>
       </template>
     </dom-if>
@@ -78,15 +78,6 @@ class RangeDatepicker extends RangeDatepickerBehavior(PolymerElement) {
         type: Boolean,
         value: false,
         notify: true,
-      },
-      /**
-       * Set locale of the calendar.
-       * Default is 'en'.
-       */
-      locale: {
-        type: String,
-        value: 'en',
-        observer: '_localeChanged',
       },
       /**
        * Set month.

@@ -7,7 +7,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-item/paper-item.js';
-import moment from 'moment';
+import { addDays, addMonths, addYears, endOfMonth, format, getDay, subMonths, subYears } from 'date-fns/esm';
 import './range-datepicker-cell.js';
 /**
  * `range-datepicker-calendar`
@@ -206,11 +206,6 @@ class RangeDatepickerCalendar extends PolymerElement {
         value: [],
       },
       _daysOfMonth: Array,
-      locale: {
-        type: String,
-        value: 'en',
-        observer: '_localeChanged',
-      },
       dateTo: {
         type: Number,
         notify: true,
@@ -248,42 +243,27 @@ class RangeDatepickerCalendar extends PolymerElement {
     };
   }
 
-  _localeChanged() {
-    if (moment.localeData(this.locale)) {
-      const dayNamesOfTheWeek = moment.localeData(this.locale).weekdaysMin();
-      const firstDayOfWeek = moment.localeData(this.locale).firstDayOfWeek();
-      const tmp = dayNamesOfTheWeek.slice().splice(0, firstDayOfWeek);
-      const newDayNamesOfTheWeek = dayNamesOfTheWeek
-        .slice()
-        .splice(firstDayOfWeek, dayNamesOfTheWeek.length)
-        .concat(tmp);
-      this.set('_dayNamesOfTheWeek', newDayNamesOfTheWeek);
-    }
-  }
-
   static get observers() {
     return ['_yearAndMonthChanged(year, month)'];
   }
 
   _yearAndMonthChanged(year, month) {
     if (year && month) {
-      const startDate = moment([year, month - 1]).locale(this.locale);
-      const endDate = moment(startDate)
-        .locale(this.locale)
-        .endOf('month');
+      let startDate = new Date(year, month - 1);
+      let endDate = endOfMonth(startDate);
 
       const rows = [];
       let columns = [];
 
       const lastDayOfWeek = 6;
 
-      while (startDate.format('DD/MM/YYYY') !== endDate.format('DD/MM/YYYY')) {
-        const dayNumber = startDate.weekday();
+      while (format(startDate, 'dd/MM/YYYY') !== format(endDate, 'dd/MM/YYYY')) {
+        const dayNumber = getDay(startDate);
 
         columns.push({
           hover: false,
-          date: parseInt(startDate.format('X'), 10),
-          title: parseInt(startDate.format('D'), 10),
+          date: startDate,
+          title: parseInt(format(startDate, 'd'), 10)
         });
 
         if (dayNumber === lastDayOfWeek) {
@@ -294,13 +274,13 @@ class RangeDatepickerCalendar extends PolymerElement {
           columns = [];
         }
 
-        startDate.add(1, 'day');
+        startDate = addDays(startDate, 1);
 
-        if (startDate.format('DD/MM/YYYY') === endDate.format('DD/MM/YYYY')) {
+        if (format(startDate, 'dd/MM/YYYY') === format(endDate, 'dd/MM/YYYY')) {
           columns.push({
             hover: false,
-            date: parseInt(startDate.format('X'), 10),
-            title: parseInt(startDate.format('D'), 10),
+            date: startDate,
+            title: parseInt(format(startDate, 'd'), 10)
           });
           for (let i = columns.length; i <= lastDayOfWeek; i += 1) {
             columns.push(0);
@@ -314,9 +294,7 @@ class RangeDatepickerCalendar extends PolymerElement {
   }
 
   _computeCurrentMonthName(month, year) {
-    return moment(`${month}/${year}`, 'MM/YYYY')
-      .locale(this.locale)
-      .format('MMMM');
+    return format(new Date(year, parseInt(month) - 1), 'MMMM');
   }
 
   _tdIsEnabled(day) {
@@ -357,15 +335,11 @@ class RangeDatepickerCalendar extends PolymerElement {
     monthName.classList.add('withTransition');
     monthName.classList.add('moveToLeft');
 
-    this.month = moment(this.month, 'MM')
-      .locale(this.locale)
-      .add(1, 'month')
-      .format('MM');
+    let date = new Date(this.year, this.month - 1);
+    let month = addMonths(date, 1);
+    this.month = format(month, 'MM');
     if (this.month === '01') {
-      this.year = moment(this.year, 'YYYY')
-        .locale(this.locale)
-        .add(1, 'year')
-        .format('YYYY');
+      this.year = format(addYears(date, 1), 'YYYY');
     }
     this.dispatchEvent(new CustomEvent('next-month'));
 
@@ -398,15 +372,10 @@ class RangeDatepickerCalendar extends PolymerElement {
     monthName.classList.add('withTransition');
     monthName.classList.add('moveToRight');
 
-    this.month = moment(this.month, 'MM')
-      .locale(this.locale)
-      .subtract(1, 'month')
-      .format('MM');
+    let date = new Date(this.year, this.month - 1);
+    this.month = format(subMonths(date, 2), 'MM');
     if (this.month === '12') {
-      this.year = moment(this.year, 'YYYY')
-        .locale(this.locale)
-        .subtract(1, 'year')
-        .format('YYYY');
+      this.year = format(subYears(date, 1), 'YYYY');
     }
     this.dispatchEvent(new CustomEvent('prev-month'));
 
