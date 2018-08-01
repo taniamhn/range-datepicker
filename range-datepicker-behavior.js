@@ -1,3 +1,5 @@
+import { format } from 'date-fns/esm';
+import * as dateLocale from 'date-fns/esm/locale';
 
 /**
  * `range-datepicker-behavior`
@@ -7,8 +9,17 @@
 /* eslint no-unused-vars: off */
 
 /* @polymerMixin */
-export const RangeDatepickerBehavior = subclass =>
+const RangeDatepickerBehavior = subclass =>
   class extends subclass {
+    _localeChanged(locale) {
+      if (!this.month) {
+        this.month = format(new Date(), 'MM', { locale: dateLocale[locale] });
+      }
+      if (!this.year) {
+        this.year = format(new Date(), 'YYYY', { locale: dateLocale[locale] });
+      }
+    }
+
     _handlePrevMonth() {
       if (!this.enableYearChange) {
         this.shadowRoot.querySelector('range-datepicker-calendar[next]')._handlePrevMonth();
@@ -31,19 +42,15 @@ export const RangeDatepickerBehavior = subclass =>
           this._yearPlus = parseInt(year, 10);
         }
         if (monthPlus < 10) {
-          this._monthPlus = '0' + monthPlus;
-        }
-        else {
-          this._monthPlus = '' + monthPlus;
+          this._monthPlus = `0${monthPlus}`;
+        } else {
+          this._monthPlus = `${monthPlus}`;
         }
       }
     }
 
     _isNarrow(forceNarrow, narrow) {
-      if (forceNarrow || narrow) {
-        return true;
-      }
-      return false;
+      return forceNarrow || narrow;
     }
 
     _noRangeChanged(isNoRange, wasNoRange) {
@@ -53,3 +60,5 @@ export const RangeDatepickerBehavior = subclass =>
       }
     }
   };
+
+export default RangeDatepickerBehavior;

@@ -1,14 +1,16 @@
-import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-icons/iron-icons.js';
-import '@polymer/iron-list/iron-list.js';
-import '@polymer/paper-styles/typography.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-item/paper-item.js';
-import { addDays, addMonths, addYears, endOfMonth, format, getDay, subMonths, subYears } from 'date-fns/esm';
-import './range-datepicker-cell.js';
+import { html, PolymerElement } from '@polymer/polymer/polymer-element';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+import '@polymer/iron-icons/iron-icons';
+import '@polymer/iron-list/iron-list';
+import '@polymer/paper-styles/typography';
+import '@polymer/paper-icon-button/paper-icon-button';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
+import '@polymer/paper-listbox/paper-listbox';
+import '@polymer/paper-item/paper-item';
+import { addDays, addMonths, addYears, endOfMonth, format, getDay, startOfWeek, subMonths, subYears } from 'date-fns/esm';
+import * as dateLocale from 'date-fns/esm/locale';
+import './range-datepicker-cell';
+
 /**
  * `range-datepicker-calendar`
  *
@@ -141,11 +143,11 @@ class RangeDatepickerCalendar extends PolymerElement {
           </div>
           <dom-if if="[[enableYearChange]]">
             <template>
-              <paper-dropdown-menu no-label-float="">
+              <paper-dropdown-menu no-label-float>
                 <paper-listbox slot="dropdown-content" selected="{{year}}" attr-for-selected="data-name">
                   <dom-repeat items="[[_yearsList]]" as="yearList">
                     <template>
-                      <paper-item data-name\$="[[yearList]]">[[yearList]]</paper-item>
+                      <paper-item data-name$="[[yearList]]">[[yearList]]</paper-item>
                     </template>
                   </dom-repeat>
                 </paper-listbox>
@@ -169,17 +171,19 @@ class RangeDatepickerCalendar extends PolymerElement {
         <div class="thead">
           <div class="tr">
             <template is="dom-repeat" items="[[_dayNamesOfTheWeek]]" as="dayNameOfWeek">
-              <div class="th">[[dayNameOfWeek]]
-            </div></template>
+              <div class="th">[[dayNameOfWeek]]</th>
+            </template>
           </div>
         </div>
         <div class="tbody">
           <template is="dom-repeat" items="[[_daysOfMonth]]" as="week">
             <div class="tr">
               <template is="dom-repeat" items="[[week]]" as="dayOfMonth">
-                <div class\$="td [[_tdIsEnabled(dayOfMonth)]]">
+                <div class$="td [[_tdIsEnabled(dayOfMonth)]]">
                   <template is="dom-if" if="[[dayOfMonth]]">
-                    <range-datepicker-cell disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" month="[[month]]" on-date-is-hovered="_handleDateHovered" hovered-date="[[hoveredDate]]" date-to="[[dateTo]]" date-from="[[dateFrom]]" on-date-is-selected="_handleDateSelected" day="[[dayOfMonth]]"></range-datepicker-cell>
+                    <range-datepicker-cell disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" month="[[month]]" on-date-is-hovered="_handleDateHovered" hovered-date="[[hoveredDate]]"
+                      date-to="[[dateTo]]" date-from="[[dateFrom]]" on-date-is-selected="_handleDateSelected"
+                      day="[[dayOfMonth]]"></range-datepicker-cell>
                   </template>
                 </div>
               </template>
@@ -188,12 +192,9 @@ class RangeDatepickerCalendar extends PolymerElement {
         </div>
       </div>
     </div>
-`;
+    `;
   }
 
-  static get is() {
-    return 'range-datepicker-calendar';
-  }
   static get properties() {
     return {
       month: String,
@@ -206,6 +207,11 @@ class RangeDatepickerCalendar extends PolymerElement {
         value: [],
       },
       _daysOfMonth: Array,
+      locale: {
+        type: String,
+        value: 'enUS',
+        observer: '_localeChanged',
+      },
       dateTo: {
         type: Number,
         notify: true,
@@ -243,14 +249,30 @@ class RangeDatepickerCalendar extends PolymerElement {
     };
   }
 
+  _localeChanged() {
+    const newDayNamesOfTheWeek = [];
+    const date = startOfWeek(new Date());
+    for (let i = 0; i < 7; i += 1) {
+      newDayNamesOfTheWeek.push(format(addDays(date, i), 'EEE', { locale: this._locale }));
+    }
+    this.set('_dayNamesOfTheWeek', newDayNamesOfTheWeek);
+  }
+
   static get observers() {
     return ['_yearAndMonthChanged(year, month)'];
+  }
+
+  get _locale() {
+    if (this.locale && this.locale !== 'en') {
+      return dateLocale[this.locale];
+    }
+    return undefined;
   }
 
   _yearAndMonthChanged(year, month) {
     if (year && month) {
       let startDate = new Date(year, month - 1);
-      let endDate = endOfMonth(startDate);
+      const endDate = endOfMonth(startDate);
 
       const rows = [];
       let columns = [];
@@ -263,7 +285,7 @@ class RangeDatepickerCalendar extends PolymerElement {
         columns.push({
           hover: false,
           date: startDate,
-          title: parseInt(format(startDate, 'd'), 10)
+          title: parseInt(format(startDate, 'd', { locale: this._locale }), 10),
         });
 
         if (dayNumber === lastDayOfWeek) {
@@ -280,7 +302,7 @@ class RangeDatepickerCalendar extends PolymerElement {
           columns.push({
             hover: false,
             date: startDate,
-            title: parseInt(format(startDate, 'd'), 10)
+            title: parseInt(format(startDate, 'd', { locale: this._locale }), 10),
           });
           for (let i = columns.length; i <= lastDayOfWeek; i += 1) {
             columns.push(0);
@@ -294,7 +316,7 @@ class RangeDatepickerCalendar extends PolymerElement {
   }
 
   _computeCurrentMonthName(month, year) {
-    return format(new Date(year, parseInt(month) - 1), 'MMMM');
+    return format(new Date(year, parseInt(month, 10) - 1), 'MMMM', { locale: this._locale });
   }
 
   _tdIsEnabled(day) {
@@ -335,8 +357,8 @@ class RangeDatepickerCalendar extends PolymerElement {
     monthName.classList.add('withTransition');
     monthName.classList.add('moveToLeft');
 
-    let date = new Date(this.year, this.month - 1);
-    let month = addMonths(date, 1);
+    const date = new Date(this.year, this.month - 1);
+    const month = addMonths(date, 1);
     this.month = format(month, 'MM');
     if (this.month === '01') {
       this.year = format(addYears(date, 1), 'YYYY');
@@ -372,7 +394,7 @@ class RangeDatepickerCalendar extends PolymerElement {
     monthName.classList.add('withTransition');
     monthName.classList.add('moveToRight');
 
-    let date = new Date(this.year, this.month - 1);
+    const date = new Date(this.year, this.month - 1);
     this.month = format(subMonths(date, 2), 'MM');
     if (this.month === '12') {
       this.year = format(subYears(date, 1), 'YYYY');
@@ -401,10 +423,7 @@ class RangeDatepickerCalendar extends PolymerElement {
   }
 
   _ifNarrow(pos, narrow) {
-    if (pos || narrow) {
-      return true;
-    }
-    return false;
+    return pos || narrow;
   }
 
   ready() {
@@ -421,4 +440,4 @@ class RangeDatepickerCalendar extends PolymerElement {
   }
 }
 
-window.customElements.define(RangeDatepickerCalendar.is, RangeDatepickerCalendar);
+window.customElements.define('range-datepicker-calendar', RangeDatepickerCalendar);

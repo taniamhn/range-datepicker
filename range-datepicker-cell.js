@@ -1,58 +1,55 @@
-import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/paper-styles/color.js';
-import '@polymer/paper-styles/typography.js';
+import { html, PolymerElement } from '@polymer/polymer/polymer-element';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+import '@polymer/paper-styles/color';
+import '@polymer/paper-styles/typography';
 
 class RangeDatepickerCell extends PolymerElement {
   static get template() {
     return html`
     <style include="iron-flex iron-flex-alignment">
-       :host {
-        @apply --paper-font-common-base;
-        display: block;
-        width: 38px;
-      }
+      :host {
+      @apply --paper-font-common-base;
+      display: block;
+      width: 38px;
+    }
 
-      div {
-        text-align: center;
-        height: 38px;
-        width: 38px;
-        margin: 0;
-        padding: 0;
-        color: var(--range-datepicker-cell-text);
-      }
+    div {
+      text-align: center;
+      height: 38px;
+      width: 38px;
+      margin: 0;
+      padding: 0;
+      color: var(--range-datepicker-cell-text);
+    }
 
-      div:not(.disabled):hover {
-        background: var(--range-datepicker-cell-hover, #e4e7e7);
-        cursor: pointer;
-      }
+    div:not(.disabled):hover {
+      background: var(--range-datepicker-cell-hover, #e4e7e7);
+      cursor: pointer;
+    }
 
-      div.hovered {
-        background: var(--range-datepicker-cell-hovered, rgba(0, 150, 136, 0.5)) !important;
-        color: var(--range-datepicker-cell-hovered-text, white);
-      }
+    div.hovered {
+      background: var(--range-datepicker-cell-hovered, rgba(0, 150, 136, 0.5)) !important;
+      color: var(--range-datepicker-cell-hovered-text, white);
+    }
 
-      div.selected {
-        background: var(--range-datepicker-cell-selected, rgb(0, 150, 136)) !important;
-        color: var(--range-datepicker-cell-selected-text, white);;
-      }
+    div.selected {
+      background: var(--range-datepicker-cell-selected, rgb(0, 150, 136)) !important;
+      color: var(--range-datepicker-cell-selected-text, white);;
+    }
 
-      div.disabled {
-        opacity: 0.4;
-      }
+    div.disabled {
+      opacity: 0.4;
+    }
     </style>
 
-    <div on-click="_handleTap" on-mouseover="_handleHover" class\$="layout horizontal center center-justified [[_isSelected(_selected)]] [[_isHovered(_hovered)]] [[_isEnabled(day, min, max, disabledDays)]]">
-      <template is="dom-if" if="[[day]]">
-        [[day.title]]
-      </template>
+    <div on-click="_handleTap" on-mouseover="_handleHover" class$="layout horizontal center center-justified [[_isSelected(_selected)]] [[_isHovered(_hovered)]] [[_isEnabled(day, min, max, disabledDays)]]">
+    <template is="dom-if" if="[[day]]">
+      [[day.title]]
+    </template>
     </div>
-`;
+    `;
   }
 
-  static get is() {
-    return 'range-datepicker-cell';
-  }
   static get properties() {
     return {
       day: Object,
@@ -136,10 +133,11 @@ class RangeDatepickerCell extends PolymerElement {
   _isEnabled(day, min, max, disabledDays) {
     this._disabled = false;
     if (disabledDays && day && day.date) {
+      const timestamp = day.date.getTime() / 1000;
       if (
-        day.date < min ||
-        day.date > max ||
-        disabledDays.findIndex(disabledDay => parseInt(disabledDay, 10) === day.date) !== -1
+        timestamp < min ||
+        timestamp > max ||
+        disabledDays.findIndex(disabledDay => parseInt(disabledDay, 10) === timestamp) !== -1
       ) {
         this._disabled = true;
         return 'disabled';
@@ -149,4 +147,4 @@ class RangeDatepickerCell extends PolymerElement {
   }
 }
 
-window.customElements.define(RangeDatepickerCell.is, RangeDatepickerCell);
+window.customElements.define('range-datepicker-cell', RangeDatepickerCell);

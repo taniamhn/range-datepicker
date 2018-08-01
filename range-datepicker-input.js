@@ -1,31 +1,29 @@
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-media-query/iron-media-query.js';
-import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-material/paper-material.js';
-import './range-datepicker-calendar.js';
+import { html, PolymerElement } from '@polymer/polymer/polymer-element';
+import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+import '@polymer/iron-media-query/iron-media-query';
+import '@polymer/paper-input/paper-input';
+import '@polymer/paper-material/paper-material';
 import { format } from 'date-fns/esm';
-import { templatize } from '@polymer/polymer/lib/utils/templatize.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
-import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
-import { Templatizer } from '@polymer/polymer/lib/legacy/templatizer-behavior.js';
-import { RangeDatepickerBehavior } from './range-datepicker-behavior.js';
+import { templatize } from '@polymer/polymer/lib/utils/templatize';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom';
+import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
+import { Templatizer } from '@polymer/polymer/lib/legacy/templatizer-behavior';
+import RangeDatepickerBehavior from './range-datepicker-behavior';
+import './range-datepicker-calendar';
 
 /**
- * `range-datepicker-input`
- *
- * @customElement
- * @polymer
- * @demo demo/index.html
- * @appliesMixin RangeDatepickerBehavior
- */
+  * `range-datepicker-input`
+  *
+  * @customElement
+  * @polymer
+  * @demo demo/index.html
+  * @appliesMixin RangeDatepickerBehavior
+  */
 class RangeDatepickerInput extends mixinBehaviors(
-  [Templatizer],
+  [Templatizer, GestureEventListeners],
   RangeDatepickerBehavior(PolymerElement)
 ) {
-  static get is() {
-    return 'range-datepicker-input';
-  }
   static get properties() {
     return {
       /**
@@ -52,6 +50,15 @@ class RangeDatepickerInput extends mixinBehaviors(
         notify: true,
       },
       /**
+       * Set locale of the calendar.
+       * Default is 'en'.
+       */
+      locale: {
+        type: String,
+        value: 'enUS',
+        observer: '_localeChanged',
+      },
+      /**
        * Set month.
        * Format is MM (example: 07 for July, 12 for january).
        * Default is current month.
@@ -72,6 +79,7 @@ class RangeDatepickerInput extends mixinBehaviors(
         type: String,
         notify: true,
         observer: '_dateFromChanged',
+        value: () => null,
       },
       /**
        * Date to.
@@ -81,6 +89,7 @@ class RangeDatepickerInput extends mixinBehaviors(
         type: String,
         notify: true,
         observer: '_dateToChanged',
+        value: () => null,
       },
       /**
        * Current hovered date.
@@ -113,7 +122,7 @@ class RangeDatepickerInput extends mixinBehaviors(
        */
       dateFormat: {
         type: String,
-        value: 'DD/MM/YYYY',
+        value: 'dd/MM/YYYY',
       },
       /**
        * The orientation against which to align the dropdown content
@@ -124,6 +133,22 @@ class RangeDatepickerInput extends mixinBehaviors(
         value: 'left',
       },
       _isNarrow: Function,
+      _parentTemplate: {
+        type: Element,
+        value: () => null,
+      },
+      ctor: {
+        type: Function,
+        value: () => null,
+      },
+      instances: {
+        type: Array,
+        value: () => [],
+      },
+      instance: {
+        type: Object,
+        value: () => { },
+      },
     };
   }
 
@@ -145,58 +170,52 @@ class RangeDatepickerInput extends mixinBehaviors(
         paper-material {
           padding: 16px;
           display: block;
-          background-color: var(--paper-card-background-color);
         }
       </style>
       <iron-media-query query="(max-width: 650px)" query-matches="{{narrow}}"></iron-media-query>
-        <div id="trigger" on-tap="_handleOpenDropdown">
-          <slot></slot>
-        </div>
+      <div id="trigger" on-tap="_handleOpenDropdown">
+        <slot></slot>
+      </div>
 
-        <iron-dropdown horizontal-align="[[horizontalAlign]]">
-          <paper-material slot="dropdown-content">
-            <dom-if if="[[!forceNarrow]]">
-              <template>
-                <dom-if if="[[!narrow]]">
-                  <template>
-                    <div class="layout vertical center-justified">
-                      <div class="layout horizontal">
-                        <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected"
-                          enable-year-change="[[enableYearChange]]" prev no-range="[[noRange]]" on-prev-month="_handlePrevMonth"
-                          hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" id="firstDatePicker"
-                          month="[[month]]" year="[[year]]">
-                        </range-datepicker-calendar>
-                        <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected"
-                          enable-year-change="[[enableYearChange]]" next no-range="[[noRange]]" on-next-month="_handleNextMonth"
-                          hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}"
-                          month="[[_monthPlus]]" year="[[_yearPlus]]">
-                        </range-datepicker-calendar>
-                      </div>
+      <iron-dropdown horizontal-align="[[horizontalAlign]]">
+        <paper-material slot="dropdown-content">
+          <dom-if if="[[!forceNarrow]]">
+            <template>
+              <dom-if if="[[!narrow]]">
+                <template>
+                  <div class="layout vertical center-justified">
+                    <div class="layout horizontal">
+                      <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected"
+                        enable-year-change="[[enableYearChange]]" prev no-range="[[noRange]]" on-prev-month="_handlePrevMonth"
+                        hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" id="firstDatePicker"
+                        locale="[[locale]]" month="[[month]]" year="[[year]]">
+                      </range-datepicker-calendar>
+                      <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" on-new-year-is-manually-selected="_handleNewYearSelected"
+                        enable-year-change="[[enableYearChange]]" next no-range="[[noRange]]" on-next-month="_handleNextMonth"
+                        hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}" date-from="{{dateFrom}}" locale="[[locale]]"
+                        month="[[_monthPlus]]" year="[[_yearPlus]]">
+                      </range-datepicker-calendar>
                     </div>
-                  </template>
-                </dom-if>
-              </template>
-            </dom-if>
-            <dom-if if="[[_isNarrow(forceNarrow, narrow)]]">
-              <template>
-                <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" enable-year-change="[[enableYearChange]]"
-                  narrow="[[_isNarrow(forceNarrow, narrow)]]" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}"
-                  date-from="{{dateFrom}}" month="[[month]]" year="[[year]]" no-range="[[noRange]]"
-                  next prev>
-                </range-datepicker-calendar>
-              </template>
-            </dom-if>
-          </paper-material>
-        </iron-dropdown>`;
+                  </div>
+                </template>
+              </dom-if>
+            </template>
+          </dom-if>
+          <dom-if if="[[_isNarrow(forceNarrow, narrow)]]">
+            <template>
+              <range-datepicker-calendar disabled-days="[[disabledDays]]" min="[[min]]" max="[[max]]" enable-year-change="[[enableYearChange]]"
+                narrow="[[_isNarrow(forceNarrow, narrow)]]" hovered-date="{{_hoveredDate}}" date-to="{{dateTo}}"
+                date-from="{{dateFrom}}" locale="[[locale]]" month="[[month]]" year="[[year]]" no-range="[[noRange]]"
+                next prev>
+              </range-datepicker-calendar>
+            </template>
+          </dom-if>
+        </paper-material>
+      </iron-dropdown>`;
   }
 
   static get observers() {
     return ['_monthChanged(month, year)'];
-  }
-
-  constructor() {
-    super();
-    this.instances = [];
   }
 
   _handleOpenDropdown() {
@@ -205,7 +224,7 @@ class RangeDatepickerInput extends mixinBehaviors(
 
   _formatDate(date) {
     if (date) {
-      return format(date, this.dateFormat);
+      return format(date, this.dateFormat, { locale: this._locale });
     }
     return '';
   }
@@ -236,6 +255,8 @@ class RangeDatepickerInput extends mixinBehaviors(
         __key__: true,
         [this.dateTo]: true,
         [this.dateFrom]: true,
+        dateTo: true,
+        dateFrom: true,
       };
       this._parentTemplate = this.queryEffectiveChildren('template');
       this.ctor = templatize(this._parentTemplate, this, {
@@ -253,10 +274,10 @@ class RangeDatepickerInput extends mixinBehaviors(
   _ensureTemplatized() {
     this.instance = new this.ctor({ dateTo: '', dateFrom: '' });
     this.instances.push(this.instance);
+    this._itemsParent.appendChild(this.instance.root);
 
     const dateFrom = this.dateFrom ? this._formatDate(this.dateFrom) : '';
     const dateTo = this.dateTo ? this._formatDate(this.dateTo) : '';
-    this._itemsParent.appendChild(this.instance.root);
     if (dateFrom) {
       this.instance.dateFrom = dateFrom;
     }
@@ -270,4 +291,4 @@ class RangeDatepickerInput extends mixinBehaviors(
   }
 }
 
-window.customElements.define(RangeDatepickerInput.is, RangeDatepickerInput);
+window.customElements.define('range-datepicker-input', RangeDatepickerInput);
