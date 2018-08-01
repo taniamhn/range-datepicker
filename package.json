@@ -20,7 +20,7 @@
     "@polymer/paper-listbox": "^3.0.0-pre.18",
     "@polymer/paper-material": "^3.0.0-pre.18",
     "@polymer/paper-styles": "^3.0.0-pre.18",
-    "date-fns": "^2.0.0-alpha.10",
+    "date-fns": "^2.0.0-alpha.16",
     "web-animations-js": "^2.3.1"
   },
   "devDependencies": {
