@@ -1,6 +1,5 @@
 import { html, PolymerElement } from '@polymer/polymer/polymer-element';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
-import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-list/iron-list';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -10,6 +9,7 @@ import '@polymer/paper-item/paper-item';
 import { addDays, addMonths, addYears, endOfMonth, format, getDay, startOfWeek, subMonths, subYears } from 'date-fns/esm';
 import * as dateLocale from 'date-fns/esm/locale';
 import './range-datepicker-cell';
+import './range-datepicker-icons';
 
 /**
  * `range-datepicker-calendar`
@@ -134,7 +134,7 @@ class RangeDatepickerCalendar extends PolymerElement {
       <div class="monthName layout horizontal center">
         <dom-if if="[[_ifNarrow(prev, narrow)]]">
           <template>
-            <paper-icon-button icon="chevron-left" on-tap="_handlePrevMonth"></paper-icon-button>
+            <paper-icon-button icon="rgdp:chevron-left" on-tap="_handlePrevMonth"></paper-icon-button>
           </template>
         </dom-if>
         <div class="flex layout horizontal center center-justified">
@@ -162,7 +162,7 @@ class RangeDatepickerCalendar extends PolymerElement {
         </div>
         <dom-if if="[[_ifNarrow(next, narrow)]]">
           <template>
-            <paper-icon-button icon="chevron-right" on-tap="_handleNextMonth"></paper-icon-button>
+            <paper-icon-button icon="rgdp:chevron-right" on-tap="_handleNextMonth"></paper-icon-button>
           </template>
         </dom-if>
       </div>
