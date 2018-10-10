@@ -279,7 +279,7 @@ class RangeDatepickerCalendar extends PolymerElement {
 
       const lastDayOfWeek = 6;
 
-      while (format(startDate, 'dd/MM/YYYY') !== format(endDate, 'dd/MM/YYYY')) {
+      while (format(startDate, 'dd/MM/yyyy') !== format(endDate, 'dd/MM/yyyy')) {
         const dayNumber = getDay(startDate);
 
         columns.push({
@@ -298,7 +298,7 @@ class RangeDatepickerCalendar extends PolymerElement {
 
         startDate = addDays(startDate, 1);
 
-        if (format(startDate, 'dd/MM/YYYY') === format(endDate, 'dd/MM/YYYY')) {
+        if (format(startDate, 'dd/MM/yyyy') === format(endDate, 'dd/MM/yyyy')) {
           columns.push({
             hover: false,
             date: startDate,
@@ -361,7 +361,7 @@ class RangeDatepickerCalendar extends PolymerElement {
     const month = addMonths(date, 1);
     this.month = format(month, 'MM');
     if (this.month === '01') {
-      this.year = format(addYears(date, 1), 'YYYY');
+      this.year = format(addYears(date, 1), 'yyyy');
     }
     this.dispatchEvent(new CustomEvent('next-month'));
 
@@ -397,7 +397,7 @@ class RangeDatepickerCalendar extends PolymerElement {
     const date = new Date(this.year, this.month - 1);
     this.month = format(subMonths(date, 2), 'MM');
     if (this.month === '12') {
-      this.year = format(subYears(date, 1), 'YYYY');
+      this.year = format(subYears(date, 1), 'yyyy');
     }
     this.dispatchEvent(new CustomEvent('prev-month'));
 

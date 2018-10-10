@@ -16,7 +16,7 @@ const RangeDatepickerBehavior = subclass =>
         this.month = format(new Date(), 'MM', { locale: dateLocale[locale] });
       }
       if (!this.year) {
-        this.year = format(new Date(), 'YYYY', { locale: dateLocale[locale] });
+        this.year = format(new Date(), 'yyyy', { locale: dateLocale[locale] });
       }
     }
 

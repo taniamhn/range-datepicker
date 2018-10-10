@@ -118,11 +118,11 @@ class RangeDatepickerInput extends mixinBehaviors(
 
       /**
        * Format of the date.
-       * Default is DD/MM/YYYY.
+       * Default is DD/MM/yyyy.
        */
       dateFormat: {
         type: String,
-        value: 'dd/MM/YYYY',
+        value: 'dd/MM/yyyy',
       },
       /**
        * The orientation against which to align the dropdown content

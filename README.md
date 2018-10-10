@@ -42,7 +42,7 @@ Inspired by [airbnb datepicker](https://github.com/airbnb/react-dates).
   <range-datepicker no-range></range-datepicker>
   <range-datepicker no-range force-narrow></range-datepicker>
 
-  <range-datepicker-input date-format="MM/DD/YYYY">
+  <range-datepicker-input date-format="MM/DD/yyyy">
     <template>
       <paper-input label="Date from" value="[[dateFrom]]" readonly></paper-input>
       <paper-input label="Date to" value="[[dateTo]]" readonly></paper-input>
